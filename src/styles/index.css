@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #FAF7F2;
+    --bg-surface: #FFFFFF;
+    --bg-muted: #F4EFE6;
+    --border-color: #E8E2D9;
+    --text-primary: #1F1D1A;
+    --text-secondary: #635544;
+    --text-muted: #8C7A63;
+    --accent: #9E472A;
+  }
+
+  .dark {
+    --bg-primary: #141311;
+    --bg-surface: #1C1A17;
+    --bg-muted: #24211D;
+    --border-color: #2E2B25;
+    --text-primary: #EDE8E1;
+    --text-secondary: #C5C1B6;
+    --text-muted: #9E988A;
+    --accent: #D47A57;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Editorial Drop Cap */
+.prose-dropcap::first-letter {
+  float: left;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 3.8em;
+  line-height: 0.8;
+  padding-top: 4px;
+  padding-right: 12px;
+  padding-bottom: 2px;
+  color: #9E472A;
+  font-weight: 600;
+}
+
+.dark .prose-dropcap::first-letter {
+  color: #D47A57;
+}
+
+/* Subtle Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D6CBB8;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #48433A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8A68F;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6E685C;
+}
+
+/* Subtle noise or texture background if desired, keeping it clean */
+.editorial-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-color) 20%, var(--border-color) 80%, transparent 100%);
+}

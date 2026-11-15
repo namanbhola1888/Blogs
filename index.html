@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHRONICLE — An Independent Journal of Ideas, Art & Technology</title>
+    <meta name="description" content="A curated digital publication exploring culture, philosophy, architectural systems, and digital craftsmanship." />
+
+    <!-- Google Fonts for High-End Editorial Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Anti-FOUC Dark Mode Initializer -->
+    <script>
+      (function() {
+        try {
+          const stored = localStorage.getItem('chronicle-theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-parchment-100 text-parchment-900 dark:bg-obsidian-900 dark:text-parchment-100 antialiased selection:bg-editorial-terracotta/20 dark:selection:bg-editorial-terracotta-dark/30 transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
