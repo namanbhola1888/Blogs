@@ -1,6 +1,6 @@
 import { ContentProvider, Post, Category, Tag, Author, PostFilterOptions, TableOfContentItem } from './types';
 import { sanityClient, isSanityConfigured, urlFor } from './sanityClient';
-import { MOCK_POSTS, MockContentAdapter } from './mockAdapter';
+import { MockContentAdapter } from './mockAdapter';
 
 // Helper to calculate reading time from body blocks
 export function calculateReadingTime(bodyBlocks: any[]): number {
@@ -46,13 +46,19 @@ export function extractTableOfContents(bodyBlocks: any[]): TableOfContentItem[] 
 
 // Transform raw Sanity post into domain Post
 function mapSanityPost(doc: any): Post {
-  const imageUrl = doc.mainImage?.asset
-    ? urlFor(doc.mainImage).width(1600).quality(85).auto('format').url()
-    : 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85';
+  let imageUrl = 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85';
+  try {
+    if (doc.mainImage?.asset) {
+      imageUrl = urlFor(doc.mainImage).width(1600).quality(85).auto('format').url() || imageUrl;
+    }
+  } catch (e) {}
 
-  const authorAvatar = doc.author?.image?.asset
-    ? urlFor(doc.author.image).width(400).height(400).auto('format').url()
-    : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+  let authorAvatar = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+  try {
+    if (doc.author?.image?.asset) {
+      authorAvatar = urlFor(doc.author.image).width(400).height(400).auto('format').url() || authorAvatar;
+    }
+  } catch (e) {}
 
   const categories: Category[] = (doc.categories || []).map((c: any) => ({
     id: c._id || c.slug?.current || 'cat',
@@ -117,7 +123,7 @@ export class SanityContentAdapter implements ContentProvider {
   private fallbackAdapter = new MockContentAdapter();
 
   async getPosts(options?: PostFilterOptions): Promise<Post[]> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getPosts(options);
     }
 
@@ -180,7 +186,6 @@ export class SanityContentAdapter implements ContentProvider {
 
       const docs = await sanityClient.fetch(query, params);
       if (!docs || docs.length === 0) {
-        // If Sanity is connected but has 0 published posts yet, fallback to mock so site isn't blank
         return this.fallbackAdapter.getPosts(options);
       }
       return docs.map(mapSanityPost);
@@ -191,7 +196,7 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getPostBySlug(slug: string): Promise<Post | null> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getPostBySlug(slug);
     }
 
@@ -244,7 +249,7 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getFeaturedPost(): Promise<Post | null> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getFeaturedPost();
     }
     const posts = await this.getPosts({ featuredOnly: true, limit: 1 });
@@ -254,16 +259,15 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getSecondarySpotlights(limit: number = 2): Promise<Post[]> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getSecondarySpotlights(limit);
     }
     const posts = await this.getPosts({ limit: limit + 1 });
-    // Filter out the first post if it was featured
     return posts.slice(1, limit + 1);
   }
 
   async getRelatedPosts(currentSlug: string, categorySlug?: string, limit: number = 3): Promise<Post[]> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getRelatedPosts(currentSlug, categorySlug, limit);
     }
     try {
@@ -290,7 +294,7 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getCategories(): Promise<Category[]> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getCategories();
     }
     try {
@@ -318,7 +322,7 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getCategoryBySlug(slug: string): Promise<Category | null> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getCategoryBySlug(slug);
     }
     try {
@@ -344,7 +348,7 @@ export class SanityContentAdapter implements ContentProvider {
   }
 
   async getTags(): Promise<Tag[]> {
-    if (!isSanityConfigured()) {
+    if (!isSanityConfigured() || !sanityClient) {
       return this.fallbackAdapter.getTags();
     }
     try {
