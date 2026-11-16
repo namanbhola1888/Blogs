@@ -108,7 +108,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ post }) => {
           <span>·</span>
           <span className="flex items-center gap-0.5">
             <Clock size={11} />
-            <span>{post.readingTimeMinutes}m</span>
+            <span>{post.readingTimeMinutes} min read</span>
           </span>
         </div>
       </div>

@@ -104,8 +104,8 @@ export const HomePage: React.FC<HomePageProps> = ({
           }}
         />
 
-        {/* Newsletter Callout */}
-        <NewsletterSection />
+        {/* Newsletter Callout — commented out; easily uncomment when ready to activate */}
+        {/* <NewsletterSection /> */}
       </main>
     </div>
   );

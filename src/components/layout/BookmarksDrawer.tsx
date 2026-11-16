@@ -71,7 +71,7 @@ export const BookmarksDrawer: React.FC<BookmarksDrawerProps> = ({ isOpen, onClos
                       <span>{post.categories[0]?.title || 'Essay'}</span>
                       <span className="flex items-center gap-1 font-mono">
                         <Clock size={10} />
-                        {post.readingTimeMinutes}m
+                        {post.readingTimeMinutes} min read
                       </span>
                     </div>
 

@@ -141,7 +141,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, posts
                   <div className="flex items-center gap-2 shrink-0 pt-2 text-xs text-parchment-500 dark:text-obsidian-400">
                     <span className="hidden sm:flex items-center gap-1">
                       <Clock size={12} />
-                      <span>{post.readingTimeMinutes}m</span>
+                      <span>{post.readingTimeMinutes} min read</span>
                     </span>
                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-editorial-terracotta" />
                   </div>

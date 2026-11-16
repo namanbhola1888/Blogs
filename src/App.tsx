@@ -61,6 +61,15 @@ const AppContent: React.FC = () => {
           setActiveStoryPost(fetched);
         });
       }
+    } else if (route.view === 'home') {
+      document.title = 'Chronicle';
+    } else if (route.view === 'about') {
+      document.title = 'About — Chronicle';
+    } else if (route.view === 'archive') {
+      document.title = 'Archive — Chronicle';
+    } else if (route.view === 'category' && route.params.slug) {
+      const catName = route.params.slug.charAt(0).toUpperCase() + route.params.slug.slice(1);
+      document.title = `${catName} — Chronicle`;
     }
   }, [route, posts]);
 

@@ -110,7 +110,7 @@ export const FeaturedHero: React.FC<FeaturedHeroProps> = ({ post }) => {
                       <span>·</span>
                       <span className="flex items-center gap-1 font-mono">
                         <Clock size={11} />
-                        {post.readingTimeMinutes}m
+                        <span>{post.readingTimeMinutes} min read</span>
                       </span>
                     </div>
                   </div>

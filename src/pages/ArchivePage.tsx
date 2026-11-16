@@ -75,7 +75,7 @@ export const ArchivePage: React.FC<ArchivePageProps> = ({ posts }) => {
                 </span>
                 <span className="flex items-center gap-1 font-mono">
                   <Clock size={12} />
-                  {post.readingTimeMinutes}m
+                  {post.readingTimeMinutes} min read
                 </span>
                 <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-editorial-terracotta" />
               </div>

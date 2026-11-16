@@ -39,7 +39,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ post }) => {
     getAdjacentPosts(post.slug).then(setAdjacent);
 
     return () => {
-      document.title = 'CHRONICLE — An Independent Journal of Ideas, Art & Technology';
+      document.title = 'Chronicle';
     };
   }, [post]);
 
