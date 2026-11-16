@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation } from '../context/NavigationContext';
-import { ArrowLeft, BookOpen, Layers, Feather, Compass, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Feather, Compass, ShieldCheck, Heart } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   const { goHome } = useNavigation();
@@ -17,13 +17,13 @@ export const AboutPage: React.FC = () => {
 
       <header className="mb-12 pb-8 border-b border-parchment-300 dark:border-obsidian-800">
         <span className="text-xs uppercase tracking-widest font-semibold text-editorial-terracotta dark:text-editorial-terracotta-dark">
-          Colophon & Manifesto
+          About the Publication
         </span>
         <h1 className="text-3xl sm:text-5xl font-serif font-bold text-parchment-950 dark:text-parchment-50 mt-1 mb-4">
           On the Dignity of Reading
         </h1>
         <p className="font-serif text-lg text-parchment-700 dark:text-obsidian-200 leading-relaxed max-w-2xl">
-          Chronicle was founded on a simple conviction: that the interface between a reader and a text is a sacred architectural space.
+          Chronicle was founded on a simple conviction: that the interface between a reader and a story is a space that deserves care, patience, and beauty.
         </p>
       </header>
 
@@ -35,10 +35,10 @@ export const AboutPage: React.FC = () => {
             <span>The Slow Reading Commitment</span>
           </h2>
           <p>
-            The contemporary internet treats human consciousness as an attention deposit to be liquidated. We are inundated by synthetic urgency, algorithmic recommendation engines, and flashings designed to induce hypervigilance.
+            Too often, the modern web treats our attention as an asset to be harvested. We are flooded by intrusive ads, autoplaying distractions, and click-driven urgency designed to keep us scrolling rather than thinking.
           </p>
           <p>
-            Chronicle rejects this paradigm completely. We publish deliberate, long-form inquiries intended to be read in quiet rooms with a cup of tea. Our typography is tuned to optimal line measures (65–75 characters), proportioned leading, and gentle tonal contrasts that do not fatigue the retina.
+            Chronicle is an alternative to that noise. We believe in quiet, long-form pieces written with care, meant to be read without rush. Every detail of this site—from the generous margins and proportional line spacing to the subtle warm color tones—is tuned to give your eyes and mind a calm space to absorb ideas.
           </p>
         </section>
 
@@ -49,10 +49,10 @@ export const AboutPage: React.FC = () => {
               <Compass size={18} />
             </div>
             <h3 className="font-serif font-semibold text-lg text-parchment-950 dark:text-parchment-100 mb-1">
-              Zero Algorithmic Feeds
+              Curated by Humans
             </h3>
             <p className="text-xs font-serif text-parchment-600 dark:text-obsidian-300 leading-relaxed">
-              Every essay is curated by human editors. We do not employ automated outrage filters or metric-maximizing click engines.
+              Every essay is selected and written by thoughtful contributors. We do not use engagement algorithms or sensational headlines.
             </p>
           </div>
 
@@ -61,25 +61,25 @@ export const AboutPage: React.FC = () => {
               <ShieldCheck size={18} />
             </div>
             <h3 className="font-serif font-semibold text-lg text-parchment-950 dark:text-parchment-100 mb-1">
-              Privacy as Architecture
+              Zero Clutter, Zero Ads
             </h3>
             <p className="text-xs font-serif text-parchment-600 dark:text-obsidian-300 leading-relaxed">
-              No third-party trackers, programmatic ad bidding, or data brokers. Your reading bookmarks remain strictly stored on your own device.
+              No banner ads, pop-up survey modals, or tracking cookies. Your saved bookmarks remain stored securely on your own device.
             </p>
           </div>
         </section>
 
-        {/* Technical Architecture Section */}
+        {/* Reader-Friendly Editorial Mission */}
         <section className="space-y-4 pt-6 border-t border-parchment-300 dark:border-obsidian-800">
           <h2 className="text-2xl font-serif font-semibold text-parchment-950 dark:text-parchment-50 flex items-center gap-2">
-            <Layers size={20} className="text-editorial-terracotta" />
-            <span>Architecture & Future Extensibility</span>
+            <Heart size={20} className="text-editorial-terracotta" />
+            <span>Our Commitment to You</span>
           </h2>
           <p>
-            Chronicle is engineered as a high-performance modern web publication built with <strong>React + Vite</strong> and hosted on <strong>Vercel</strong>. Content is managed through <strong>Sanity CMS</strong> using custom Portable Text schemas, automated reading time calculations, and responsive CDN asset pipelines.
+            Whether you are reading in early morning light or winding down late at night, we hope Chronicle serves as an open door to new ideas, thoughtful inquiries, and genuine inspiration.
           </p>
           <p>
-            Crucially, the application implements a <em>Modular Content Provider Pattern</em> (<code className="text-sm font-mono px-1.5 py-0.5 rounded bg-parchment-200 dark:bg-obsidian-800">ContentProvider</code>). The entire frontend communicates exclusively through domain interfaces. In the future, a <strong>Django/Python</strong> REST API or GraphQL backend can be plugged in by creating a single adapter without altering any React components, styles, or page templates.
+            Thank you for spending your valuable time with us.
           </p>
         </section>
       </div>

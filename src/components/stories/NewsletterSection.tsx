@@ -32,22 +32,22 @@ export const NewsletterSection: React.FC = () => {
       <div className="relative z-10 max-w-xl">
         <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-semibold text-editorial-terracotta dark:text-editorial-terracotta-dark mb-2">
           <Mail size={13} />
-          <span>The Sunday Dispatch</span>
+          <span>The Chronicle Dispatch</span>
         </div>
 
         <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-parchment-950 dark:text-parchment-50 leading-tight mb-3">
-          Quiet reading for Sunday mornings.
+          Thoughtful reading, straight to your inbox.
         </h3>
 
         <p className="font-serif text-sm sm:text-base text-parchment-700 dark:text-obsidian-200 leading-relaxed mb-6">
-          Delivered once each week at 7:00 AM. A single curated long-form essay, field notes on acoustic architecture, and references from the physical archive. No spam, ever.
+          Receive new essays, thoughtful inquiries, and fresh perspectives directly in your inbox whenever a new piece is published. No spam, ever.
         </p>
 
         {subscribed ? (
           <div className="flex items-center gap-2.5 p-4 rounded-lg bg-editorial-olive-light dark:bg-editorial-olive/20 text-editorial-olive dark:text-editorial-olive-dark border border-editorial-olive/30">
             <CheckCircle2 size={18} />
             <span className="font-serif text-sm">
-              You are on the distribution list. Welcome to the reading circle.
+              You are on the list. New dispatches will arrive whenever a fresh piece is published.
             </span>
           </div>
         ) : (

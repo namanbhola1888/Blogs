@@ -1,6 +1,5 @@
 import { ContentProvider, Post, Category, Tag, Author, PostFilterOptions, TableOfContentItem } from './types';
 import { sanityClient, isSanityConfigured, urlFor } from './sanityClient';
-import { MockContentAdapter } from './mockAdapter';
 
 // Helper to calculate reading time from body blocks
 export function calculateReadingTime(bodyBlocks: any[]): number {
@@ -79,7 +78,7 @@ function mapSanityPost(doc: any): Post {
     name: doc.author?.name || 'Staff Writer',
     slug: doc.author?.slug?.current || 'staff',
     role: doc.author?.role || 'Contributing Essayist',
-    bio: doc.author?.bio || 'Writer and researcher for Chronicle.',
+    bio: doc.author?.bio || '',
     avatar: authorAvatar,
     social: doc.author?.social || {},
   };
@@ -97,7 +96,7 @@ function mapSanityPost(doc: any): Post {
     publishedAt: doc.publishedAt || new Date().toISOString(),
     readingTimeMinutes: readingTime,
     featured: Boolean(doc.featured),
-    issueNumber: doc.issueNumber || 'Current Issue',
+    issueNumber: doc.issueNumber || '',
     coverImage: {
       url: imageUrl,
       alt: doc.mainImage?.alt || doc.title,
@@ -120,11 +119,10 @@ function mapSanityPost(doc: any): Post {
 export class SanityContentAdapter implements ContentProvider {
   name = 'Sanity CMS Provider';
   isFallback = false;
-  private fallbackAdapter = new MockContentAdapter();
 
   async getPosts(options?: PostFilterOptions): Promise<Post[]> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getPosts(options);
+      return [];
     }
 
     try {
@@ -132,8 +130,15 @@ export class SanityContentAdapter implements ContentProvider {
       const params: Record<string, any> = {};
 
       if (options?.categorySlug) {
-        filter += ` && $categorySlug in categories[]->slug.current`;
+        const cleanSlug = options.categorySlug.toLowerCase().trim();
+        filter += ` && (
+          $categorySlug in categories[]->slug.current
+          || lower($categorySlug) in categories[]->slug.current
+          || count((categories[]->slug.current)[lower(@) == lower($categorySlug)]) > 0
+          || references(*[_type == "category" && (slug.current == $categorySlug || lower(slug.current) == $cleanSlug || lower(title) == $cleanSlug)]._id)
+        )`;
         params.categorySlug = options.categorySlug;
+        params.cleanSlug = cleanSlug;
       }
 
       if (options?.featuredOnly) {
@@ -145,7 +150,7 @@ export class SanityContentAdapter implements ContentProvider {
         params.query = `*${options.searchQuery}*`;
       }
 
-      let query = `${filter} | order(publishedAt desc) {
+      let query = `${filter} | order(coalesce(publishedAt, _createdAt) desc) {
         _id,
         title,
         slug,
@@ -186,18 +191,18 @@ export class SanityContentAdapter implements ContentProvider {
 
       const docs = await sanityClient.fetch(query, params);
       if (!docs || docs.length === 0) {
-        return this.fallbackAdapter.getPosts(options);
+        return [];
       }
       return docs.map(mapSanityPost);
     } catch (err) {
-      console.warn('[SanityContentAdapter] Query failed, using fallback data:', err);
-      return this.fallbackAdapter.getPosts(options);
+      console.warn('[SanityContentAdapter] Query failed:', err);
+      return [];
     }
   }
 
   async getPostBySlug(slug: string): Promise<Post | null> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getPostBySlug(slug);
+      return null;
     }
 
     try {
@@ -239,18 +244,18 @@ export class SanityContentAdapter implements ContentProvider {
 
       const doc = await sanityClient.fetch(query, { slug });
       if (!doc) {
-        return this.fallbackAdapter.getPostBySlug(slug);
+        return null;
       }
       return mapSanityPost(doc);
     } catch (err) {
-      console.warn('[SanityContentAdapter] Fetch by slug failed, using fallback:', err);
-      return this.fallbackAdapter.getPostBySlug(slug);
+      console.warn('[SanityContentAdapter] Fetch by slug failed:', err);
+      return null;
     }
   }
 
   async getFeaturedPost(): Promise<Post | null> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getFeaturedPost();
+      return null;
     }
     const posts = await this.getPosts({ featuredOnly: true, limit: 1 });
     if (posts.length > 0) return posts[0];
@@ -260,18 +265,19 @@ export class SanityContentAdapter implements ContentProvider {
 
   async getSecondarySpotlights(limit: number = 2): Promise<Post[]> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getSecondarySpotlights(limit);
+      return [];
     }
     const posts = await this.getPosts({ limit: limit + 1 });
+    if (posts.length <= 1) return [];
     return posts.slice(1, limit + 1);
   }
 
   async getRelatedPosts(currentSlug: string, categorySlug?: string, limit: number = 3): Promise<Post[]> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getRelatedPosts(currentSlug, categorySlug, limit);
+      return [];
     }
     try {
-      const query = `*[_type == "post" && slug.current != $currentSlug && ($categorySlug in categories[]->slug.current || !defined($categorySlug))] | order(publishedAt desc)[0...$limit] {
+      const query = `*[_type == "post" && slug.current != $currentSlug && ($categorySlug in categories[]->slug.current || !defined($categorySlug))] | order(coalesce(publishedAt, _createdAt) desc)[0...$limit] {
         _id,
         title,
         slug,
@@ -285,17 +291,17 @@ export class SanityContentAdapter implements ContentProvider {
       }`;
       const docs = await sanityClient.fetch(query, { currentSlug, categorySlug, limit });
       if (!docs || docs.length === 0) {
-        return this.fallbackAdapter.getRelatedPosts(currentSlug, categorySlug, limit);
+        return [];
       }
       return docs.map(mapSanityPost);
     } catch (err) {
-      return this.fallbackAdapter.getRelatedPosts(currentSlug, categorySlug, limit);
+      return [];
     }
   }
 
   async getCategories(): Promise<Category[]> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getCategories();
+      return [];
     }
     try {
       const query = `*[_type == "category"] | order(title asc) {
@@ -307,7 +313,7 @@ export class SanityContentAdapter implements ContentProvider {
         "articleCount": count(*[_type == "post" && references(^._id)])
       }`;
       const docs = await sanityClient.fetch(query);
-      if (!docs || docs.length === 0) return this.fallbackAdapter.getCategories();
+      if (!docs || docs.length === 0) return [];
       return docs.map((d: any) => ({
         id: d._id,
         title: d.title,
@@ -317,24 +323,25 @@ export class SanityContentAdapter implements ContentProvider {
         articleCount: d.articleCount || 0,
       }));
     } catch (err) {
-      return this.fallbackAdapter.getCategories();
+      return [];
     }
   }
 
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getCategoryBySlug(slug);
+      return null;
     }
     try {
-      const query = `*[_type == "category" && slug.current == $slug][0] {
+      const cleanSlug = slug.toLowerCase().trim();
+      const query = `*[_type == "category" && (slug.current == $slug || lower(slug.current) == $cleanSlug || lower(title) == $cleanSlug)][0] {
         _id,
         title,
         slug,
         description,
         color
       }`;
-      const doc = await sanityClient.fetch(query, { slug });
-      if (!doc) return this.fallbackAdapter.getCategoryBySlug(slug);
+      const doc = await sanityClient.fetch(query, { slug, cleanSlug });
+      if (!doc) return null;
       return {
         id: doc._id,
         title: doc.title,
@@ -343,13 +350,13 @@ export class SanityContentAdapter implements ContentProvider {
         accentColor: doc.color,
       };
     } catch (err) {
-      return this.fallbackAdapter.getCategoryBySlug(slug);
+      return null;
     }
   }
 
   async getTags(): Promise<Tag[]> {
     if (!isSanityConfigured() || !sanityClient) {
-      return this.fallbackAdapter.getTags();
+      return [];
     }
     try {
       const query = `*[_type == "tag"] | order(title asc) {
@@ -358,14 +365,14 @@ export class SanityContentAdapter implements ContentProvider {
         slug
       }`;
       const docs = await sanityClient.fetch(query);
-      if (!docs || docs.length === 0) return this.fallbackAdapter.getTags();
+      if (!docs || docs.length === 0) return [];
       return docs.map((d: any) => ({
         id: d._id,
         title: d.title,
         slug: d.slug?.current || '',
       }));
     } catch (err) {
-      return this.fallbackAdapter.getTags();
+      return [];
     }
   }
 
@@ -373,6 +380,22 @@ export class SanityContentAdapter implements ContentProvider {
     prev: Pick<Post, 'slug' | 'title' | 'coverImage'> | null;
     next: Pick<Post, 'slug' | 'title' | 'coverImage'> | null;
   }> {
-    return this.fallbackAdapter.getAdjacentPosts(currentSlug);
+    const posts = await this.getPosts();
+    const index = posts.findIndex((p) => p.slug === currentSlug);
+    if (index === -1) return { prev: null, next: null };
+
+    const prev = index > 0 ? {
+      slug: posts[index - 1].slug,
+      title: posts[index - 1].title,
+      coverImage: posts[index - 1].coverImage,
+    } : null;
+
+    const next = index < posts.length - 1 ? {
+      slug: posts[index + 1].slug,
+      title: posts[index + 1].title,
+      coverImage: posts[index + 1].coverImage,
+    } : null;
+
+    return { prev, next };
   }
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "studio": "npm --prefix sanity run dev"
   },
   "dependencies": {
     "@portabletext/react": "^3.1.0",

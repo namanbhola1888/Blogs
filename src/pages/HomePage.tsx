@@ -26,20 +26,22 @@ export const HomePage: React.FC<HomePageProps> = ({
   // Filter posts based on category and search query
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
-      // Exclude lead story from grid if no filters are active
-      if (!selectedCategory && !searchQuery && featuredPost && post.id === featuredPost.id) {
+      // Only exclude lead story from recent grid if there are enough posts to populate the grid (> 2 posts)
+      // and neither category nor search filter is active
+      if (!selectedCategory && !searchQuery && featuredPost && post.id === featuredPost.id && posts.length > 2) {
         return false;
       }
 
       if (selectedCategory) {
+        const catTarget = selectedCategory.toLowerCase().trim();
         const hasCategory = post.categories.some(
-          (c) => c.slug.toLowerCase() === selectedCategory.toLowerCase()
+          (c) => c.slug.toLowerCase().trim() === catTarget || c.title.toLowerCase().trim() === catTarget
         );
         if (!hasCategory) return false;
       }
 
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
+        const q = searchQuery.toLowerCase().trim();
         const matchesTitle = post.title.toLowerCase().includes(q);
         const matchesExcerpt = post.excerpt.toLowerCase().includes(q);
         const matchesAuthor = post.author.name.toLowerCase().includes(q);
@@ -78,7 +80,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               {isFiltering ? 'Filtered Dispatches' : 'Recent Inquiries & Essays'}
             </h3>
             <span className="text-xs uppercase tracking-wider text-parchment-500 dark:text-obsidian-400 font-mono">
-              {filteredPosts.length} pieces
+              {filteredPosts.length} {filteredPosts.length === 1 ? 'piece' : 'pieces'}
             </span>
           </div>
 
@@ -95,6 +97,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* The Story Grid */}
         <StoryGrid
           posts={filteredPosts}
+          isFiltered={isFiltering}
           onResetFilters={() => {
             setSelectedCategory('');
             setSearchQuery('');

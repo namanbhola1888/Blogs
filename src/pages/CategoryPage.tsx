@@ -22,9 +22,46 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({ categorySlug }) => {
     Promise.all([
       getCategoryBySlug(categorySlug),
       getPosts({ categorySlug }),
-    ]).then(([catData, postsData]) => {
-      setCategory(catData);
-      setPosts(postsData);
+      getPosts(),
+    ]).then(([catData, postsData, allPosts]) => {
+      let resolvedCategory = catData;
+
+      // If category wasn't found directly, try finding it from all posts
+      if (!resolvedCategory && allPosts && allPosts.length > 0) {
+        const clean = categorySlug.toLowerCase().trim();
+        for (const p of allPosts) {
+          const found = p.categories.find(
+            (c) => c.slug.toLowerCase().trim() === clean || c.title.toLowerCase().trim() === clean
+          );
+          if (found) {
+            resolvedCategory = found;
+            break;
+          }
+        }
+      }
+
+      setCategory(resolvedCategory);
+
+      if (postsData && postsData.length > 0) {
+        setPosts(postsData);
+      } else if (allPosts && allPosts.length > 0) {
+        // Fallback: filter from all loaded posts
+        const clean = categorySlug.toLowerCase().trim();
+        const matched = allPosts.filter((p) =>
+          p.categories.some(
+            (c) =>
+              c.slug.toLowerCase().trim() === clean ||
+              c.title.toLowerCase().trim() === clean ||
+              (resolvedCategory && (c.id === resolvedCategory.id || c.slug.toLowerCase().trim() === resolvedCategory.slug.toLowerCase().trim()))
+          )
+        );
+        setPosts(matched);
+      } else {
+        setPosts([]);
+      }
+
+      setLoading(false);
+    }).catch(() => {
       setLoading(false);
     });
   }, [categorySlug]);

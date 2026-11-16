@@ -18,17 +18,15 @@ export const Masthead: React.FC<MastheadProps> = ({
   const todayFormatted = format(new Date(), 'EEEE, MMMM d, yyyy');
 
   return (
-    <header className="pt-8 pb-6 border-b border-parchment-300 dark:border-obsidian-800">
+    <header className="pt-6 pb-6 border-b border-parchment-300 dark:border-obsidian-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Dateline Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between pb-3 border-b border-parchment-300 dark:border-obsidian-800 text-[11px] uppercase tracking-widest text-parchment-600 dark:text-obsidian-400 gap-2 font-mono">
+        <div className="flex items-center justify-between pb-3 border-b border-parchment-300 dark:border-obsidian-800 text-[11px] uppercase tracking-widest text-parchment-600 dark:text-obsidian-400 font-mono">
           <div>{todayFormatted}</div>
-          <div className="hidden md:block">Zurich · London · Tokyo · New York</div>
-          <div>Vol. XIV — No. 48</div>
         </div>
 
         {/* Center Grand Logo */}
-        <div className="text-center py-8 sm:py-10">
+        <div className="text-center py-6 sm:py-8">
           <button
             onClick={goHome}
             className="group inline-block focus:outline-none"
@@ -37,8 +35,8 @@ export const Masthead: React.FC<MastheadProps> = ({
               CHRONICLE
             </h1>
           </button>
-          <p className="mt-3.5 text-xs sm:text-sm font-serif italic text-parchment-700 dark:text-obsidian-300 max-w-xl mx-auto tracking-wide">
-            An independent digital publication dedicated to spatial theory, human-scale computing, and the preservation of contemplative life.
+          <p className="font-serif italic text-sm sm:text-base text-parchment-700 dark:text-obsidian-200 mt-2 sm:mt-3 max-w-xl mx-auto tracking-normal sm:tracking-wide">
+            A quiet space built for curious readers — exploring thoughtful ideas, technology, and stories worth your time.
           </p>
         </div>
 
