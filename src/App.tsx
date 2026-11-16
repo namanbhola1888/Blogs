@@ -53,14 +53,17 @@ const AppContent: React.FC = () => {
   // When route changes to a story, fetch/set active post
   useEffect(() => {
     if (route.view === 'story' && route.params.slug) {
-      const existing = posts.find((p) => p.slug === route.params.slug);
-      if (existing) {
+      const slug = route.params.slug;
+      const existing = posts.find((p) => p.slug === slug);
+      if (existing && existing.body && Array.isArray(existing.body) && existing.body.length > 0) {
         setActiveStoryPost(existing);
-      } else {
-        getPostBySlug(route.params.slug).then((fetched) => {
-          setActiveStoryPost(fetched);
-        });
       }
+      // Always fetch the full article by slug to guarantee complete body, TOC, and latest blocks
+      getPostBySlug(slug).then((fetched) => {
+        if (fetched) {
+          setActiveStoryPost(fetched);
+        }
+      });
     } else if (route.view === 'home') {
       document.title = 'Chronicle';
     } else if (route.view === 'about') {

@@ -161,6 +161,7 @@ export class SanityContentAdapter implements ContentProvider {
         featured,
         issueNumber,
         mainImage,
+        body,
         author->{
           _id,
           name,

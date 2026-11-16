@@ -95,7 +95,13 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ post }) => {
               style={{ fontSize: `${fontSize}px` }}
             >
               {/* PortableText Body Renderer */}
-              <PortableTextRenderer value={post.body} enableDropCap={true} />
+              {post.body && Array.isArray(post.body) && post.body.length > 0 ? (
+                <PortableTextRenderer value={post.body} enableDropCap={true} />
+              ) : post.excerpt ? (
+                <div className="font-serif text-lg sm:text-[19px] leading-[1.85] text-parchment-800 dark:text-parchment-200 my-6">
+                  <p>{post.excerpt}</p>
+                </div>
+              ) : null}
 
               {/* Mobile Share & Reading Controls Bar */}
               <div className="lg:hidden mt-8 pt-6 border-t border-parchment-300 dark:border-obsidian-800">
